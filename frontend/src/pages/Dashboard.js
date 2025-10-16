@@ -111,12 +111,13 @@ const Dashboard = () => {
       return;
     }
 
-    saveFramesToStorage([...frames, ...parsedFrames]);
+    // Replace all frames with newly parsed ones
+    saveFramesToStorage(parsedFrames);
     setScriptText('');
     setIsScriptDialogOpen(false);
     toast({
-      title: "Script parsed",
-      description: `${parsedFrames.length} frames added to storyboard.`
+      title: "Script imported successfully",
+      description: `${parsedFrames.length} frames created. Click on any frame to add details.`
     });
   };
 
@@ -154,47 +155,88 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Action Bar */}
-        <div className="flex flex-wrap gap-3 mb-8">
-          <Button onClick={handleAddFrame} className="bg-blue-600 hover:bg-blue-700 transition-colors">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Frame
-          </Button>
-          
-          <Dialog open={isScriptDialogOpen} onOpenChange={setIsScriptDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="border-slate-300">
-                <Upload className="h-4 w-4 mr-2" />
-                Import Script
+        <div className="mb-8">
+          {frames.length === 0 ? (
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">Get Started</h3>
+              <p className="text-blue-700 mb-4">Paste your entire script with frame numbers to automatically create all frames at once.</p>
+              <Dialog open={isScriptDialogOpen} onOpenChange={setIsScriptDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-blue-600 hover:bg-blue-700 transition-colors">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Import Script
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl">Import Your Script</DialogTitle>
+                    <DialogDescription className="text-base">
+                      Paste your complete script below. Frame numbers will be auto-detected (e.g., "Frame 1:", "Frame 2:", etc.). You can add voice over, editing, and camera notes later.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <Textarea
+                    value={scriptText}
+                    onChange={(e) => setScriptText(e.target.value)}
+                    placeholder="Frame 1: Welcome to our AI video course. Today we will explore the fundamentals...\n\nFrame 2: Artificial Intelligence has transformed the way we live and work...\n\nFrame 3: Let's start with the basics..."
+                    className="min-h-[400px] font-mono text-sm border-slate-300"
+                  />
+                  <div className="flex justify-end space-x-2">
+                    <Button variant="outline" onClick={() => setIsScriptDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleParseScript} className="bg-blue-600 hover:bg-blue-700">
+                      <Upload className="h-4 w-4 mr-2" />
+                      Import All Frames
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-3">
+              <Dialog open={isScriptDialogOpen} onOpenChange={setIsScriptDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-blue-600 hover:bg-blue-700 transition-colors">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Import New Script
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl">Import Your Script</DialogTitle>
+                    <DialogDescription className="text-base">
+                      Paste your complete script below. This will replace all existing frames.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <Textarea
+                    value={scriptText}
+                    onChange={(e) => setScriptText(e.target.value)}
+                    placeholder="Frame 1: Welcome to our AI video course...\n\nFrame 2: Today we will explore..."
+                    className="min-h-[400px] font-mono text-sm border-slate-300"
+                  />
+                  <div className="flex justify-end space-x-2">
+                    <Button variant="outline" onClick={() => setIsScriptDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleParseScript} className="bg-blue-600 hover:bg-blue-700">
+                      <Upload className="h-4 w-4 mr-2" />
+                      Import All Frames
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              
+              <Button onClick={handleAddFrame} variant="outline" className="border-slate-300">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Single Frame
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Import Script</DialogTitle>
-                <DialogDescription>
-                  Paste your script below. Use format: "Frame 1:", "Frame 2:", etc. to separate frames.
-                </DialogDescription>
-              </DialogHeader>
-              <Textarea
-                value={scriptText}
-                onChange={(e) => setScriptText(e.target.value)}
-                placeholder="Frame 1: Welcome to our course...\n\nFrame 2: Today we will explore..."
-                className="min-h-[300px] font-mono text-sm"
-              />
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setIsScriptDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleParseScript} className="bg-blue-600 hover:bg-blue-700">
-                  Parse & Import
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
 
-          <Button onClick={handleExportPDF} variant="outline" className="border-slate-300">
-            <Download className="h-4 w-4 mr-2" />
-            Export PDF
-          </Button>
+              <Button onClick={handleExportPDF} variant="outline" className="border-slate-300">
+                <Download className="h-4 w-4 mr-2" />
+                Export PDF
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Frames List */}
