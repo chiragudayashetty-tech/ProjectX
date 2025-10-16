@@ -256,11 +256,7 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">No frames yet</h3>
-                  <p className="text-slate-500 mb-4">Start by adding a frame or importing a script</p>
-                  <Button onClick={handleAddFrame} className="bg-blue-600 hover:bg-blue-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Your First Frame
-                  </Button>
+                  <p className="text-slate-500">Import your script above to get started</p>
                 </div>
               </div>
             </Card>
