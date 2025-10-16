@@ -116,7 +116,7 @@ const Dashboard = () => {
     setIsScriptDialogOpen(false);
     toast({
       title: "Script parsed",
-      description: `${parsedFrames.length} frames added to storyboard."
+      description: `${parsedFrames.length} frames added to storyboard.`
     });
   };
 
